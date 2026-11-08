@@ -1,4 +1,4 @@
-const YM_ID = process.env.NEXT_PUBLIC_YM_ID;
+const YM_ID = process.env.NEXT_PUBLIC_YM_ID ?? "114135374";
 
 /**
  * Счётчик Метрики. Рендерится сервером прямо в HTML статической страницы —

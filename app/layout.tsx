@@ -47,7 +47,8 @@ export const metadata: Metadata = {
     icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
   },
   verification: {
-    yandex: process.env.NEXT_PUBLIC_YANDEX_VERIFICATION,
+    yandex:
+      process.env.NEXT_PUBLIC_YANDEX_VERIFICATION ?? "fc321c3e7e39884b",
   },
 };
 
