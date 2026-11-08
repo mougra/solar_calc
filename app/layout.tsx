@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { BrandMark } from "@/components/ui";
-import { Analytics } from "@/components/Analytics";
+import { MetrikaScript } from "@/components/MetrikaScript";
+import { MetrikaHits } from "@/components/MetrikaHits";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -204,7 +205,8 @@ export default function RootLayout({
           </div>
         </footer>
 
-        <Analytics />
+        <MetrikaScript />
+        <MetrikaHits />
       </body>
     </html>
   );
