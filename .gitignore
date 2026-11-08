@@ -7,6 +7,10 @@ out/
 .deploy-static.tar.gz
 .env*.local
 .env.production
+
+# Внутренние документы проекта — только локально
+/docs/
+/AGENTS.md
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store

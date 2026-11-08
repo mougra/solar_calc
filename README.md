@@ -37,7 +37,6 @@ lib/state/query.ts      сериализация состояния в URL
 data/                   города, приборы, инсоляция, статьи
 scripts/                генератор PVGIS, OG-картинки
 deploy/                 nginx, docker-compose
-docs/                   состояние проекта, деплой, CPA
 ```
 
 ## Данные инсоляции
@@ -51,13 +50,6 @@ npm run insolation
 Скрипт кэширует ответы в `.cache/pvgis/`, повторный прогон мгновенный.
 SARAH3 покрывает запад РФ; восточнее PVGIS отдаёт ERA5 — поле `source` фиксирует
 фактическую базу.
-
-## Документация
-
-- [docs/STATE.md](docs/STATE.md) — состояние, решения, грабли
-- [docs/deploy.md](docs/deploy.md) — VPS, nginx, HTTPS, CI/CD
-- [docs/CPA.md](docs/CPA.md) — партнёрские ссылки и маркировка рекламы
-- [AGENTS.md](AGENTS.md) — правила разработки
 
 ## Лицензия
 
