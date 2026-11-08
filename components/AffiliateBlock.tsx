@@ -1,3 +1,5 @@
+"use client";
+
 import {
   CATEGORY_LABELS,
   offerHref,
@@ -5,6 +7,7 @@ import {
   type OfferCategory,
   type Shop,
 } from "@/lib/offers";
+import { reachGoal } from "@/lib/analytics";
 
 const SHOPS: Shop[] = ["ozon", "yandex", "wb"];
 
@@ -30,6 +33,9 @@ export function AffiliateBlock({
         </h3>
         <span className="text-xs font-medium text-slate-400">
           Реклама · партнёрские ссылки
+          {process.env.NEXT_PUBLIC_ERID
+            ? ` · erid: ${process.env.NEXT_PUBLIC_ERID}`
+            : ""}
         </span>
       </div>
 
@@ -42,6 +48,7 @@ export function AffiliateBlock({
             href={offerHref(category, shop)}
             rel="sponsored nofollow noopener"
             target="_blank"
+            onClick={() => reachGoal("offer_click", { category, shop })}
             className="btn btn-outline"
           >
             {SHOP_LABELS[shop]}

@@ -11,7 +11,6 @@ import {
   mpptCurrent,
   peakLoadWReal,
   pvMonthlyYieldKwh,
-  recommendedMpptA,
   requiredPvW,
   systemEfficiency,
 } from "@/lib/core/calc";
@@ -78,7 +77,10 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
     continuousW: peak.sum,
     surgeW: peak.maxSurge,
   });
-  const mpptA = recommendedMpptA({ pvW, batteryV: voltage });
+  const mpptRaw = mpptCurrent({ pvW, batteryV: voltage });
+  const mpptA = Math.ceil(mpptRaw);
+  const mpptCount = Math.ceil(mpptRaw / 150);
+  const pvWRounded = Math.round(pvW / 10) * 10;
 
   const yields = pvMonthlyYieldKwh({ pvW, pshMonthly: monthlyPsh, efficiency: eff });
   const consumptionMonthly = MONTH_DAYS.map(
@@ -87,6 +89,11 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
   const annualYield = yields.reduce((sum, value) => sum + value, 0);
 
   const warnings = [...battery.warnings];
+  if (mpptRaw > 150) {
+    warnings.push(
+      `Расчётный ток MPPT — ${Math.ceil(mpptRaw)} А. Один контроллер столько не держит: нужно ${mpptCount} × 150 А или переход на 48 В.`,
+    );
+  }
   if (polarNight) {
     warnings.unshift(
       `${monthFull(month)} в этом городе — полярная ночь, солнца нет. Расчёт сделан по худшему месяцу с инсоляцией (${monthFull(designMonth)}).`,
@@ -114,7 +121,7 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
           </span>
         </div>
         <h2 className="mt-2 text-2xl font-bold text-slate-900">
-          Ваша система: {fmtPower(Math.round(pvW / 10) * 10)} панелей и{" "}
+          Ваша система: {fmtPower(pvWRounded)} панелей и{" "}
           {fmtAh(battery.recommendedAh)} АКБ
         </h2>
       </div>
@@ -142,7 +149,7 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
         />
         <Stat
           label="MPPT-контроллер"
-          value={`${mpptA}`}
+          value={mpptCount > 1 ? `≥${mpptA}` : `${mpptA}`}
           unit="А"
           hint={`При ${voltage} В, с запасом 25%`}
         />
@@ -201,7 +208,7 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
               ["Итого с запасом 10%", fmtEnergy(energy.totalWh)],
               ["Энергия в АКБ с потерями", fmtEnergy(battery.requiredWh)],
               ["КПД тракта панель→нагрузка", fmtPercent(eff)],
-              ["Требуемая мощность под зиму", fmtPower(pvW)],
+              ["Требуемая мощность под зиму", fmtPower(pvWRounded)],
             ].map(([label, value]) => (
               <div key={label} className="flex items-baseline justify-between gap-3">
                 <dt className="text-slate-500">{label}</dt>

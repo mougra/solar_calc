@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { Check } from "lucide-react";
 import { useCalc } from "./store";
 import { APPLIANCES, APPLIANCE_CATEGORIES } from "@/data/appliances";
+import { applianceIcon, categoryGradient } from "@/components/appliance-icons";
 import { dailyEnergy } from "@/lib/core/calc";
 import { fmtEnergy, fmt1 } from "@/lib/format";
 
@@ -33,9 +35,10 @@ export function StepLoads() {
           </p>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {APPLIANCES.map((preset) => {
             const active = selectedIds.has(preset.id);
+            const Icon = applianceIcon(preset.id);
             return (
               <button
                 key={preset.id}
@@ -43,21 +46,41 @@ export function StepLoads() {
                 onClick={() => togglePreset(preset)}
                 aria-pressed={active}
                 title={preset.hint}
-                className={`rounded-xl border p-3 text-left transition-colors ${
+                className={`group relative overflow-hidden rounded-2xl border bg-white text-left transition-all ${
                   active
-                    ? "border-emerald-600 bg-emerald-50 ring-1 ring-emerald-600"
-                    : "border-slate-200 bg-white hover:border-slate-300"
+                    ? "border-emerald-500 shadow-md ring-2 ring-emerald-500/25"
+                    : "border-slate-200 hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-md"
                 }`}
               >
-                <span className="text-lg" aria-hidden="true">
-                  {preset.icon}
-                </span>
-                <span className="mt-1 block text-sm font-semibold text-slate-900">
-                  {preset.name}
-                </span>
-                <span className="block text-xs text-slate-500">
-                  {preset.watt} Вт · {fmt1(preset.hours)} ч
-                </span>
+                <div
+                  className={`relative flex h-24 items-center justify-center overflow-hidden bg-gradient-to-br ${categoryGradient(preset.category)}`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-8 -right-6 h-20 w-20 rounded-full bg-white/15"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className="absolute -bottom-7 -left-4 h-16 w-16 rounded-full bg-white/10"
+                  />
+                  <Icon
+                    className="relative h-11 w-11 text-white drop-shadow-sm"
+                    strokeWidth={1.5}
+                  />
+                  {active ? (
+                    <span className="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-emerald-600 shadow">
+                      <Check className="h-4 w-4" strokeWidth={3} />
+                    </span>
+                  ) : null}
+                </div>
+                <div className="p-3">
+                  <span className="block text-sm font-semibold text-slate-900">
+                    {preset.name}
+                  </span>
+                  <span className="mt-0.5 block text-xs text-slate-500">
+                    {preset.watt} Вт · {fmt1(preset.hours)} ч
+                  </span>
+                </div>
               </button>
             );
           })}

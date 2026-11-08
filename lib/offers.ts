@@ -44,6 +44,21 @@ export interface ParsedOffer {
   shop: Shop;
 }
 
+/**
+ * Партнёрская ссылка из переменных окружения.
+ * Имена: PARTNER_PANELS_OZON, PARTNER_BATTERY_YANDEX и т.д.
+ * Пока переменная не задана — используется поисковая ссылка магазина.
+ */
+export function getPartnerLink(
+  category: OfferCategory,
+  shop: Shop,
+): { url: string; erid?: string } | null {
+  const key = `PARTNER_${category.toUpperCase()}_${shop.toUpperCase()}`;
+  const url = process.env[key];
+  if (!url) return null;
+  return { url, erid: process.env.NEXT_PUBLIC_ERID };
+}
+
 export function parseOfferId(id: string): ParsedOffer | null {
   const [category, shop] = id.split("-");
   if (!category || !shop) return null;
@@ -56,6 +71,9 @@ export function buildOfferUrl(
   parsed: ParsedOffer,
   options: { query?: string } = {},
 ): string {
+  const partner = getPartnerLink(parsed.category, parsed.shop);
+  if (partner) return partner.url;
+
   const query = options.query ?? SEARCH_QUERY[parsed.category];
   return TEMPLATES[parsed.shop](query);
 }

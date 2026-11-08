@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { CalculatorStoreProvider, useCalc } from "./store";
 import { StepCity } from "./StepCity";
 import { StepLoads } from "./StepLoads";
@@ -9,6 +9,7 @@ import { StepResult } from "./StepResult";
 import type { CityOption } from "./types";
 import type { CalcState } from "@/lib/state/query";
 import { toSearchParams } from "@/lib/state/query";
+import { reachGoal } from "@/lib/analytics";
 
 const STEPS = [
   { n: 1, title: "Город", hint: "инсоляция" },
@@ -34,12 +35,25 @@ export function CalculatorWizard({
 function WizardInner({ cities }: { cities: CityOption[] }) {
   const state = useCalc((store) => store);
   const query = toSearchParams(state);
+  const fired = useRef(new Set<string>());
 
   // Состояние живёт в URL: расчётом можно поделиться, страница не теряет данные.
   useEffect(() => {
     const url = `${window.location.pathname}?${query}`;
     window.history.replaceState(null, "", url);
   }, [query]);
+
+  // Воронка: старт визарда и дохождение до результата.
+  useEffect(() => {
+    if (state.step >= 2 && !fired.current.has("start")) {
+      fired.current.add("start");
+      reachGoal("wizard_start");
+    }
+    if (state.step === 4 && !fired.current.has("result")) {
+      fired.current.add("result");
+      reachGoal("wizard_result");
+    }
+  }, [state.step]);
 
   const canNext = state.step === 2 ? state.items.length > 0 : true;
 

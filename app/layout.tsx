@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
 import { BrandMark } from "@/components/ui";
+import { Analytics } from "@/components/Analytics";
 import { SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -53,6 +54,7 @@ const NAV = [
   { href: "/kalkulyator-solnechnyh-panelej", label: "Расчёт системы" },
   { href: "/kalkulyatory", label: "Калькуляторы" },
   { href: "/solnechnaya-elektrostanciya", label: "Города" },
+  { href: "/blog", label: "Статьи" },
   { href: "/metodika", label: "Методика" },
 ];
 
@@ -126,8 +128,8 @@ export default function RootLayout({
                 </span>
               </div>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Независимый калькулятор автономного электроснабжения. Не продаём
-                оборудование — считаем честно.
+                Независимый калькулятор автономного электроснабжения для дома и
+                дачи.
               </p>
             </div>
 
@@ -161,6 +163,11 @@ export default function RootLayout({
               <p className="text-sm font-semibold text-slate-900">Проект</p>
               <ul className="mt-3 space-y-2 text-sm text-slate-600">
                 <li>
+                  <Link className="hover:text-emerald-700" href="/blog">
+                    Статьи
+                  </Link>
+                </li>
+                <li>
                   <Link className="hover:text-emerald-700" href="/metodika">
                     Методика расчёта
                   </Link>
@@ -181,8 +188,7 @@ export default function RootLayout({
             <div>
               <p className="text-sm font-semibold text-slate-900">Данные</p>
               <p className="mt-3 text-sm leading-6 text-slate-600">
-                Инсоляция — PVGIS v5.3 (JRC, SARAH3/ERA5). Расчёты — открытые
-                формулы, проверенные unit-тестами.
+                Инсоляция — PVGIS v5.3 (JRC, SARAH3/ERA5).
               </p>
             </div>
           </div>
@@ -191,12 +197,14 @@ export default function RootLayout({
             <div className="container-x flex flex-col gap-2 py-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
               <p>© {new Date().getFullYear()} SolarCalc. Расчёты носят справочный характер.</p>
               <p>
-                Партнёрские ссылки помечены. Мы не продаём оборудование и не
-                берём оплату за расчёт.
+                Партнёрские ссылки помечены. Расчёт бесплатный и не требует
+                регистрации.
               </p>
             </div>
           </div>
         </footer>
+
+        <Analytics />
       </body>
     </html>
   );

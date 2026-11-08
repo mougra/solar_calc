@@ -311,6 +311,14 @@ export function MpptCalculator() {
           превышать максимум контроллера.
         </Note>
 
+        {current > 150 ? (
+          <Note tone="amber">
+            Расчётный ток {fmt1(current)} А превышает типовые 150 А. Понадобится
+            два контроллера или переход на 48 В — на 24 В такой массив одним
+            контроллером не обслужить.
+          </Note>
+        ) : null}
+
         <AffiliateBlock category="mppt" />
       </div>
     </div>

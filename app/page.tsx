@@ -77,8 +77,7 @@ export default function HomePage() {
             <Badge tone="green">Данные PVGIS · без регистрации</Badge>
             <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
               Калькулятор солнечных панелей для дома —{" "}
-              <span className="text-emerald-600">честный расчёт</span>, а не
-              продажа комплекта
+              <span className="text-emerald-600">расчёт по вашей инсоляции</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-7 text-slate-600 sm:text-lg">
               Считаем потребление, ёмкость аккумуляторов, мощность панелей и
@@ -99,7 +98,7 @@ export default function HomePage() {
               {[
                 { label: "Городов", value: `${CITIES_BY_POPULATION.length}` },
                 { label: "Месяцев данных", value: "12" },
-                { label: "Формул в тестах", value: "16" },
+                { label: "Инструментов", value: "5" },
                 { label: "Стоимость", value: "0 ₽" },
               ].map((item) => (
                 <div key={item.label}>
@@ -172,7 +171,7 @@ export default function HomePage() {
               },
               {
                 title: "Открытые формулы",
-                text: "Энергия, ёмкость, мощность массива, ток MPPT и сечение кабеля — в одном файле lib/core/calc.ts. 16 unit-тестов фиксируют эталонные значения.",
+                text: "Энергия, ёмкость, мощность массива, ток MPPT и сечение кабеля считаются по открытым формулам в одном файле — lib/core/calc.ts.",
               },
               {
                 title: "Два сценария",

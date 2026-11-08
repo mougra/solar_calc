@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { CITIES } from "@/data/cities";
 import { hasCityInsolation } from "@/lib/insolation";
 import { CALCULATORS } from "@/data/calculators";
+import { ARTICLES } from "@/data/articles";
 import { SITE_URL } from "@/lib/seo";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -34,6 +35,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${SITE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
       url: `${SITE_URL}/o-proekte`,
       lastModified: now,
       changeFrequency: "yearly",
@@ -56,5 +63,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...cityPages];
+  const articlePages: MetadataRoute.Sitemap = ARTICLES.map((article) => ({
+    url: `${SITE_URL}/blog/${article.slug}`,
+    lastModified: new Date(article.updatedAt),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...cityPages, ...articlePages];
 }

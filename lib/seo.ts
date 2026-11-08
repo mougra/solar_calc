@@ -10,6 +10,13 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+function defaultOgImage(path: string): string {
+  if (path.startsWith("/solnechnaya-elektrostanciya/")) return "/og/city.png";
+  if (path.startsWith("/kalkulyator")) return "/og/calculator.png";
+  if (path.startsWith("/blog")) return "/og/article.png";
+  return "/og/home.png";
+}
+
 export function buildMetadata(input: {
   title: string;
   description: string;
@@ -19,6 +26,7 @@ export function buildMetadata(input: {
   type?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
+  ogImage?: string;
 }): Metadata {
   const {
     title,
@@ -29,9 +37,11 @@ export function buildMetadata(input: {
     type = "website",
     publishedTime,
     modifiedTime,
+    ogImage = defaultOgImage(path),
   } = input;
 
   const url = absoluteUrl(path);
+  const image = absoluteUrl(ogImage);
 
   return {
     title,
@@ -48,6 +58,7 @@ export function buildMetadata(input: {
       url,
       title,
       description,
+      images: [{ url: image, width: 1200, height: 630, alt: title }],
       ...(publishedTime ? { publishedTime } : {}),
       ...(modifiedTime ? { modifiedTime } : {}),
     },
@@ -55,6 +66,7 @@ export function buildMetadata(input: {
       card: "summary_large_image",
       title,
       description,
+      images: [image],
     },
   };
 }
