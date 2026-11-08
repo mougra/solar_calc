@@ -4,6 +4,7 @@ out/
 .npm-cache/
 .cache/
 .tmp/
+.deploy-static.tar.gz
 .env*.local
 .env.production
 *.tsbuildinfo

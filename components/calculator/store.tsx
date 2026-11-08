@@ -21,6 +21,8 @@ interface CalcActions {
   updateItem: (id: string, patch: Partial<LoadItem>) => void;
   removeItem: (id: string) => void;
   addCustom: (name: string, watt: number, hours: number, quantity: number) => void;
+  /** Применить состояние из URL целиком (после гидратации). */
+  hydrate: (state: CalcState) => void;
 }
 
 export type CalcStore = CalcState & CalcActions;
@@ -81,6 +83,17 @@ export function createCalculatorStore(initial: CalcState): StoreApi<CalcStore> {
             quantity: Math.max(1, quantity),
           },
         ],
+      }),
+
+    hydrate: (next) =>
+      set({
+        city: next.city,
+        month: next.month,
+        items: next.items,
+        voltage: next.voltage,
+        chemistry: next.chemistry,
+        autonomyDays: next.autonomyDays,
+        step: next.step,
       }),
   }));
 }

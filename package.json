@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:static": "cross-env BUILD_MODE=export next build",
+    "deploy:static": "node scripts/deploy-static.mjs",
     "start": "next start",
     "test": "node lib/core/calc.test.ts && node lib/state/query.test.ts",
     "test:watch": "node --watch lib/core/calc.test.ts",
@@ -25,7 +27,9 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "cross-env": "^10.1.0",
     "postcss": "^8.5.0",
+    "ssh2": "^1.17.0",
     "tailwindcss": "4.3.5",
     "typescript": "^5.9.0"
   }

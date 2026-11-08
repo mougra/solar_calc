@@ -6,6 +6,14 @@ export const SITE_URL = (
 
 export const SITE_NAME = "SolarCalc";
 
+/** На статическом хостинге Apache отдаёт каталоги, поэтому URL со слешем. */
+const IS_STATIC = process.env.BUILD_MODE === "export";
+
+export function sitePath(path: string): string {
+  if (!IS_STATIC || path === "/" || path.endsWith("/")) return path;
+  return `${path}/`;
+}
+
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
@@ -40,14 +48,14 @@ export function buildMetadata(input: {
     ogImage = defaultOgImage(path),
   } = input;
 
-  const url = absoluteUrl(path);
+  const url = absoluteUrl(sitePath(path));
   const image = absoluteUrl(ogImage);
 
   return {
     title,
     description,
     keywords,
-    alternates: { canonical: path },
+    alternates: { canonical: sitePath(path) },
     robots: noindex
       ? { index: false, follow: false }
       : { index: true, follow: true },
@@ -112,7 +120,7 @@ export function webApplicationJsonLd(input: {
     "@type": "WebApplication",
     name: input.name,
     description: input.description,
-    url: absoluteUrl(input.path),
+    url: absoluteUrl(sitePath(input.path)),
     applicationCategory: "UtilitiesApplication",
     operatingSystem: "Any",
     inLanguage: "ru-RU",
@@ -148,7 +156,7 @@ export function breadcrumbsJsonLd(
       "@type": "ListItem",
       position: index + 1,
       name: crumb.name,
-      item: absoluteUrl(crumb.path),
+      item: absoluteUrl(sitePath(crumb.path)),
     })),
   };
 }
@@ -166,7 +174,7 @@ export function articleJsonLd(input: {
     "@type": "Article",
     headline: input.title,
     description: input.description,
-    url: absoluteUrl(input.path),
+    url: absoluteUrl(sitePath(input.path)),
     datePublished: input.publishedTime,
     dateModified: input.modifiedTime ?? input.publishedTime,
     inLanguage: "ru-RU",

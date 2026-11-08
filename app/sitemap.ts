@@ -3,51 +3,55 @@ import { CITIES } from "@/data/cities";
 import { hasCityInsolation } from "@/lib/insolation";
 import { CALCULATORS } from "@/data/calculators";
 import { ARTICLES } from "@/data/articles";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, sitePath } from "@/lib/seo";
+
+// Нужно для статического экспорта: sitemap генерируется на этапе сборки.
+export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
+  const url = (path: string) => `${SITE_URL}${sitePath(path)}`;
 
   const staticPages: MetadataRoute.Sitemap = [
-    { url: `${SITE_URL}/`, lastModified: now, changeFrequency: "weekly", priority: 1 },
+    { url: url("/"), lastModified: now, changeFrequency: "weekly", priority: 1 },
     {
-      url: `${SITE_URL}/kalkulyatory`,
+      url: url("/kalkulyatory"),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     ...CALCULATORS.map((calculator) => ({
-      url: `${SITE_URL}${calculator.href}`,
+      url: url(calculator.href),
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.9,
     })),
     {
-      url: `${SITE_URL}/solnechnaya-elektrostanciya`,
+      url: url("/solnechnaya-elektrostanciya"),
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/metodika`,
+      url: url("/metodika"),
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.6,
     },
     {
-      url: `${SITE_URL}/blog`,
+      url: url("/blog"),
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: `${SITE_URL}/o-proekte`,
+      url: url("/o-proekte"),
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.4,
     },
     {
-      url: `${SITE_URL}/privacy`,
+      url: url("/privacy"),
       lastModified: now,
       changeFrequency: "yearly",
       priority: 0.2,
@@ -57,14 +61,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const cityPages: MetadataRoute.Sitemap = CITIES.filter((city) =>
     hasCityInsolation(city.slug),
   ).map((city) => ({
-    url: `${SITE_URL}/solnechnaya-elektrostanciya/${city.slug}`,
+    url: url(`/solnechnaya-elektrostanciya/${city.slug}`),
     lastModified: now,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));
 
   const articlePages: MetadataRoute.Sitemap = ARTICLES.map((article) => ({
-    url: `${SITE_URL}/blog/${article.slug}`,
+    url: url(`/blog/${article.slug}`),
     lastModified: new Date(article.updatedAt),
     changeFrequency: "monthly" as const,
     priority: 0.7,

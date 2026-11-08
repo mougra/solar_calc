@@ -81,3 +81,8 @@ export function buildOfferUrl(
 export function offerHref(category: OfferCategory, shop: Shop): string {
   return `/go/${category}-${shop}`;
 }
+
+/** Все комбинации категорий и магазинов — для статической генерации /go/. */
+export const ALL_OFFERS: string[] = Object.keys(CATEGORY_LABELS).flatMap(
+  (category) => Object.keys(SHOP_LABELS).map((shop) => `${category}-${shop}`),
+);

@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { Badge, Container, SectionHeading } from "@/components/ui";
 import { CALCULATORS } from "@/data/calculators";
 import { getCityOptions } from "@/lib/cities-data";
-import { parseCalcState } from "@/lib/state/query";
+import { DEFAULT_STATE } from "@/lib/state/query";
 import {
   breadcrumbsJsonLd,
   buildMetadata,
@@ -56,14 +56,12 @@ const FAQ = [
   },
 ];
 
-export default async function CalculatorPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const params = await searchParams;
-  const initial = parseCalcState(params);
+export default function CalculatorPage() {
   const cities = getCityOptions();
+  const initial = {
+    ...DEFAULT_STATE,
+    items: DEFAULT_STATE.items.map((item) => ({ ...item })),
+  };
 
   return (
     <>

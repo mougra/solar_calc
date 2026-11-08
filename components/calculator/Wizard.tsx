@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { CalculatorStoreProvider, useCalc } from "./store";
 import { StepCity } from "./StepCity";
 import { StepLoads } from "./StepLoads";
@@ -8,7 +8,7 @@ import { StepSystem } from "./StepSystem";
 import { StepResult } from "./StepResult";
 import type { CityOption } from "./types";
 import type { CalcState } from "@/lib/state/query";
-import { toSearchParams } from "@/lib/state/query";
+import { parseCalcState, toSearchParams } from "@/lib/state/query";
 import { reachGoal } from "@/lib/analytics";
 
 const STEPS = [
@@ -36,12 +36,31 @@ function WizardInner({ cities }: { cities: CityOption[] }) {
   const state = useCalc((store) => store);
   const query = toSearchParams(state);
   const fired = useRef(new Set<string>());
+  const lastWritten = useRef<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  // Гидратация из URL до первой отрисовки: состояние из ссылки применяется
+  // без видимого мигания, даже когда страница отдана статикой.
+  useLayoutEffect(() => {
+    lastWritten.current = window.location.search.replace(/^\?/, "");
+    const search = window.location.search;
+    if (search) {
+      state.hydrate(parseCalcState(new URLSearchParams(search)));
+    }
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Состояние живёт в URL: расчётом можно поделиться, страница не теряет данные.
   useEffect(() => {
-    const url = `${window.location.pathname}?${query}`;
-    window.history.replaceState(null, "", url);
-  }, [query]);
+    if (!ready || query === lastWritten.current) return;
+    lastWritten.current = query;
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}?${query}`,
+    );
+  }, [query, ready]);
 
   // Воронка: старт визарда и дохождение до результата.
   useEffect(() => {
