@@ -6,6 +6,7 @@ import {
   cableSizing,
   computeAutonomy,
   dailyEnergy,
+  estimateBudget,
   inverterSizing,
   mpptCurrent,
   pickStandard,
@@ -174,5 +175,33 @@ describe("pickStandard", () => {
   it("возвращает первый номинал не меньше требуемого", () => {
     assert.equal(pickStandard(0.6, [0.5, 1, 1.5]), 1);
     assert.equal(pickStandard(1.5, [0.5, 1, 1.5]), 1.5);
+  });
+});
+
+describe("бюджет", () => {
+  const prices = {
+    panelPerW: { min: 20, max: 30 },
+    batteryPerKwh: { min: 6000, max: 10000 },
+    inverterPerKw: { min: 10000, max: 20000 },
+    mpptPerA: { min: 100, max: 200 },
+  };
+
+  it("суммирует диапазоны по удельным ценам", () => {
+    const r = estimateBudget(
+      { pvW: 1000, batteryNominalWh: 5000, inverterW: 3000, mpptA: 60 },
+      prices,
+    );
+    close(r.total.min, 86_000, 1e-6);
+    close(r.total.max, 152_000, 1e-6);
+    assert.equal(r.lines.length, 4);
+  });
+
+  it("не уходит в минус при нулевых параметрах", () => {
+    const r = estimateBudget(
+      { pvW: 0, batteryNominalWh: 0, inverterW: 0, mpptA: 0 },
+      prices,
+    );
+    assert.equal(r.total.min, 0);
+    assert.equal(r.total.max, 0);
   });
 });

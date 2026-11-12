@@ -7,6 +7,7 @@ import {
   CHEMISTRY,
   batterySizing,
   dailyEnergy,
+  estimateBudget,
   inverterSizing,
   mpptCurrent,
   peakLoadWReal,
@@ -14,7 +15,8 @@ import {
   requiredPvW,
   systemEfficiency,
 } from "@/lib/core/calc";
-import { fmt1, fmtAh, fmtEnergy, fmtPercent, fmtPower, monthFull } from "@/lib/format";
+import { fmt1, fmtAh, fmtEnergy, fmtMoney, fmtPercent, fmtPower, monthFull } from "@/lib/format";
+import { PRICE_TABLE, PRICES_UPDATED } from "@/data/prices";
 import { AffiliateBlock } from "@/components/AffiliateBlock";
 import { MonthlyChart } from "@/components/MonthlyChart";
 import { Badge, Note, Stat } from "@/components/ui";
@@ -81,6 +83,17 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
   const mpptA = Math.ceil(mpptRaw);
   const mpptCount = Math.ceil(mpptRaw / 150);
   const pvWRounded = Math.round(pvW / 10) * 10;
+
+  const budget = estimateBudget(
+    {
+      pvW,
+      batteryNominalWh: battery.recommendedAh * voltage,
+      inverterW: inverter.recommendedW,
+      mpptA,
+    },
+    PRICE_TABLE,
+  );
+  const money = (value: number) => fmtMoney(Math.round(value / 1000) * 1000);
 
   const yields = pvMonthlyYieldKwh({ pvW, pshMonthly: monthlyPsh, efficiency: eff });
   const consumptionMonthly = MONTH_DAYS.map(
@@ -240,9 +253,81 @@ export function StepResult({ cities }: { cities: CityOption[] }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="rounded-2xl border border-slate-200 bg-white p-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <h3 className="font-bold text-slate-900">
+            Ориентировочный бюджет комплекта
+          </h3>
+          <span className="text-xs text-slate-400">
+            оценка, {PRICES_UPDATED}
+          </span>
+        </div>
+        <p className="mt-1.5 text-sm text-slate-600">
+          <strong className="text-slate-900">
+            {money(budget.total.min)} — {money(budget.total.max)}
+          </strong>{" "}
+          за панели, аккумуляторы, инвертор и контроллер. Кабель, крепёж,
+          автоматика и монтаж не входят.
+        </p>
+        <dl className="mt-4 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2">
+          {budget.lines.map((line) => (
+            <div
+              key={line.label}
+              className="flex items-baseline justify-between gap-3"
+            >
+              <dt className="text-slate-500">{line.label}</dt>
+              <dd className="font-semibold text-slate-900">
+                {money(line.min)} — {money(line.max)}
+              </dd>
+            </div>
+          ))}
+        </dl>
+        <p className="mt-3 text-xs leading-5 text-slate-400">
+          Диапазон по розничным ценам РФ, не оферта: цена зависит от бренда,
+          партии и региона. Разбор по компонентам — в{" "}
+          <Link
+            href="/blog/skolko-stoit-avtonomnaya-sistema"
+            className="text-emerald-700 underline decoration-emerald-300 underline-offset-2"
+          >
+            статье о стоимости системы
+          </Link>
+          .
+        </p>
+      </div>
+
+      <div className="print:hidden">
+        <h3 className="text-lg font-bold text-slate-900">
+          Остальное оборудование под ваш расчёт
+        </h3>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <AffiliateBlock
+            category="inverter"
+            title="Инвертор"
+            note={`Номинал от ${fmt1(inverter.recommendedW / 1000)} кВт с перегрузкой под пуск ${fmtPower(peak.maxSurge)}.`}
+          />
+          <AffiliateBlock
+            category="mppt"
+            title="MPPT-контроллер"
+            note={`Ток ${mpptA} А при ${voltage} В${mpptCount > 1 ? `, потребуется ${mpptCount} шт.` : ""}.`}
+          />
+          <AffiliateBlock
+            category="cable"
+            title="Кабель и автоматика"
+            note="Сечение считайте по току и длине трассы в отдельном калькуляторе."
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 print:hidden">
         <button type="button" onClick={copyLink} className="btn btn-outline">
           {copied ? "Ссылка скопирована" : "Поделиться расчётом"}
+        </button>
+        <button
+          type="button"
+          onClick={() => window.print()}
+          className="btn btn-outline"
+        >
+          Скачать смету
         </button>
         <Link href="/kalkulyator-secheniya-kabelya" className="btn btn-ghost">
           Подобрать сечение кабеля →

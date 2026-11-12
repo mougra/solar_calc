@@ -108,7 +108,7 @@ export default function CalculatorPage() {
       </Container>
 
       {/* SEO-текст */}
-      <section className="border-t border-slate-200 bg-white py-12">
+      <section className="border-t border-slate-200 bg-white py-12 print:hidden">
         <Container>
           <div className="prose-basic max-w-3xl">
             <h2>Как калькулятор считает солнечную систему</h2>
@@ -168,7 +168,7 @@ export default function CalculatorPage() {
       </section>
 
       {/* FAQ */}
-      <Container className="py-12" as="section">
+      <Container className="py-12 print:hidden" as="section">
         <SectionHeading eyebrow="Вопросы" title="Частые вопросы о расчёте" />
         <div className="mt-6 grid gap-3 md:grid-cols-2">
           {FAQ.map((item) => (
@@ -186,7 +186,7 @@ export default function CalculatorPage() {
       </Container>
 
       {/* Другие калькуляторы */}
-      <Container className="pb-16" as="section">
+      <Container className="pb-16 print:hidden" as="section">
         <SectionHeading eyebrow="Дальше" title="Смежные калькуляторы" />
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {CALCULATORS.filter((calculator) => calculator.href !== PATH).map(

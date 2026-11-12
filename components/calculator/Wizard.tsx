@@ -78,7 +78,7 @@ function WizardInner({ cities }: { cities: CityOption[] }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[240px_1fr]">
-      <aside className="lg:sticky lg:top-24 lg:self-start">
+      <aside className="lg:sticky lg:top-24 lg:self-start print:hidden">
         <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1">
           {STEPS.map((step) => {
             const active = step.n === state.step;
@@ -126,7 +126,7 @@ function WizardInner({ cities }: { cities: CityOption[] }) {
           {state.step === 4 ? <StepResult cities={cities} /> : null}
 
           {state.step < 4 ? (
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5">
+            <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5 print:hidden">
               <button
                 type="button"
                 className="btn btn-ghost"
@@ -145,7 +145,7 @@ function WizardInner({ cities }: { cities: CityOption[] }) {
               </button>
             </div>
           ) : (
-            <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5">
+            <div className="mt-8 flex items-center justify-between gap-3 border-t border-slate-200 pt-5 print:hidden">
               <button
                 type="button"
                 className="btn btn-ghost"

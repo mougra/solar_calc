@@ -50,6 +50,10 @@ export const metadata: Metadata = {
     yandex:
       process.env.NEXT_PUBLIC_YANDEX_VERIFICATION ?? "fc321c3e7e39884b",
   },
+  other: {
+    // Подтверждение владения сайтом для CPA-сети (mitgo / admitad).
+    "mitgo-verification": "c4499991-1b5e-4b57-8c72-0b742aee1f97",
+  },
 };
 
 const NAV = [
@@ -66,7 +70,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className="flex min-h-dvh flex-col">
-        <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur">
+        <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur print:hidden">
           <div className="container-x flex h-16 items-center justify-between gap-4">
             <Link
               href="/"
@@ -120,7 +124,7 @@ export default function RootLayout({
 
         <main className="flex-1">{children}</main>
 
-        <footer className="mt-16 border-t border-slate-200 bg-white">
+        <footer className="mt-16 border-t border-slate-200 bg-white print:hidden">
           <div className="container-x grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <div className="flex items-center gap-2.5 font-bold text-slate-900">

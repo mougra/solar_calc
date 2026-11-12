@@ -4,6 +4,7 @@ import { Badge, ButtonLink, Card, Container, SectionHeading } from "@/components
 import { JsonLd } from "@/components/JsonLd";
 import { CALCULATORS } from "@/data/calculators";
 import { CITIES_BY_POPULATION } from "@/data/cities";
+import { SCENARIOS } from "@/data/scenarios";
 import {
   buildMetadata,
   faqJsonLd,
@@ -114,6 +115,39 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* Готовые сценарии: один клик до результата */}
+      <Container className="pt-10" as="section">
+        <div className="rounded-2xl border border-emerald-200 bg-emerald-50/60 p-5 sm:p-6">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-lg font-bold text-slate-900">
+              Начните с готового примера
+            </h2>
+            <span className="text-xs text-slate-500">
+              откроется сразу результат — город и приборы меняются на шагах 1–3
+            </span>
+          </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-3">
+            {SCENARIOS.map((scenario) => (
+              <Link
+                key={scenario.slug}
+                href={scenario.href}
+                className="group rounded-xl border border-emerald-200 bg-white p-4 transition-shadow hover:shadow-md"
+              >
+                <span className="block font-semibold text-slate-900 group-hover:text-emerald-700">
+                  {scenario.title}
+                </span>
+                <span className="mt-1 block text-sm leading-6 text-slate-500">
+                  {scenario.hint}
+                </span>
+                <span className="mt-3 inline-flex text-sm font-semibold text-emerald-700">
+                  Показать расчёт →
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </Container>
 
       {/* Калькуляторы */}
       <Container className="py-14" as="section">

@@ -516,3 +516,83 @@ export function peakLoadWReal(items: LoadItem[]): { sum: number; maxSurge: numbe
   }
   return { sum, maxSurge };
 }
+
+// ---------------------------------------------------------------------------
+// 8. Ориентировочный бюджет
+// ---------------------------------------------------------------------------
+
+/** Диапазон цены, ₽. */
+export interface PriceRange {
+  min: number;
+  max: number;
+}
+
+/** Удельные розничные цены. Задаются данными, а не расчётом. */
+export interface PriceTable {
+  /** ₽ за 1 Вт установленной мощности панелей */
+  panelPerW: PriceRange;
+  /** ₽ за 1 кВт·ч номинальной ёмкости АКБ */
+  batteryPerKwh: PriceRange;
+  /** ₽ за 1 кВт номинала инвертора */
+  inverterPerKw: PriceRange;
+  /** ₽ за 1 А тока MPPT-контроллера */
+  mpptPerA: PriceRange;
+}
+
+export interface BudgetInput {
+  pvW: number;
+  /** Номинальная энергия АКБ: recommendedAh × напряжение, Вт·ч */
+  batteryNominalWh: number;
+  inverterW: number;
+  mpptA: number;
+}
+
+export interface BudgetLine {
+  label: string;
+  min: number;
+  max: number;
+}
+
+export interface BudgetResult {
+  lines: BudgetLine[];
+  total: PriceRange;
+}
+
+/**
+ * Оценка бюджета комплекта по удельным ценам.
+ * Кабель, крепёж, автоматику и монтаж не считает: они зависят от объекта.
+ */
+export function estimateBudget(
+  input: BudgetInput,
+  prices: PriceTable,
+): BudgetResult {
+  const lines: BudgetLine[] = [
+    {
+      label: "Солнечные панели",
+      min: Math.max(0, input.pvW) * prices.panelPerW.min,
+      max: Math.max(0, input.pvW) * prices.panelPerW.max,
+    },
+    {
+      label: "Аккумуляторы",
+      min: (Math.max(0, input.batteryNominalWh) / 1000) * prices.batteryPerKwh.min,
+      max: (Math.max(0, input.batteryNominalWh) / 1000) * prices.batteryPerKwh.max,
+    },
+    {
+      label: "Инвертор",
+      min: (Math.max(0, input.inverterW) / 1000) * prices.inverterPerKw.min,
+      max: (Math.max(0, input.inverterW) / 1000) * prices.inverterPerKw.max,
+    },
+    {
+      label: "MPPT-контроллер",
+      min: Math.max(0, input.mpptA) * prices.mpptPerA.min,
+      max: Math.max(0, input.mpptA) * prices.mpptPerA.max,
+    },
+  ];
+
+  const total = lines.reduce(
+    (acc, line) => ({ min: acc.min + line.min, max: acc.max + line.max }),
+    { min: 0, max: 0 },
+  );
+
+  return { lines, total };
+}
