@@ -29,7 +29,7 @@ npm start            # прод-сервер
 app/                    маршруты
   kalkulyator-*/        5 калькуляторов
   solnechnaya-elektrostanciya/[city]/   85 городов (SSG)
-  blog/[slug]/          10 статей
+  blog/[slug]/          13 статей
   go/[offer]/           партнёрский редирект
 components/             UI, визард, графики
 lib/core/calc.ts        вся физика + тесты
